@@ -9,6 +9,7 @@ public:
     ~Cell();
     void create();
     HWND getHandle() const;
+    int getId() const;
 
 private:
     HWND hwndButton;

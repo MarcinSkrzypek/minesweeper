@@ -11,7 +11,7 @@ Cell::~Cell() {
 
 void Cell::create() {
     hwndButton = CreateWindowW(L"BUTTON", L"",
-                                WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON,
+                                WS_TABSTOP | WS_VISIBLE | WS_CHILD | BS_PUSHBUTTON | BS_BITMAP,
                                 x, y, width, height,
                                 parentHWND, (HMENU)id,
                                 hInstance, NULL);
@@ -19,4 +19,8 @@ void Cell::create() {
 
 HWND Cell::getHandle() const {
     return hwndButton;
+}
+
+int Cell::getId() const {
+    return id;
 }

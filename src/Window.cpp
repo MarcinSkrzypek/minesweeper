@@ -1,5 +1,8 @@
 #include "Window.h"
 #include "Cell.h"
+#include "BitmapLoader.h"
+
+BitmapLoader bitmapLoader;
 
 Window::Window() : m_is_run(false), cells(nullptr), rows(10), cols(10) {
     cells = new Cell**[rows];
@@ -144,6 +147,7 @@ bool Window::isRun()
 
 void Window::onCreate()
 {
+    bitmapLoader.loadImages();
     createCells();
 }
 
@@ -154,10 +158,28 @@ void Window::onUpdate()
 
 void Window::onCommand(int wmId) {
     // TODO:
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            if (cells[i][j] && cells[i][j]->getId() == wmId) {
+                HBITMAP oneBitmap = bitmapLoader.getImage(L"One");
+                SendMessage(cells[i][j]->getHandle(), BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)oneBitmap);
+                break;
+            }
+        }
+    }
 }
 
 void Window::onRightClick(int wmId) {
     // TODO:
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            if (cells[i][j] && cells[i][j]->getId() == wmId) {
+                HBITMAP qmBitmap = bitmapLoader.getImage(L"QuestionMark");
+                SendMessage(cells[i][j]->getHandle(), BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)qmBitmap);
+                break;
+            }
+        }
+    }
 }
 
 void Window::onDestroy()

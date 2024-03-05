@@ -15,6 +15,9 @@
 					<Add option="-g" />
 					<Add directory="include" />
 				</Compiler>
+				<Linker>
+					<Add library="gdi32" />
+				</Linker>
 			</Target>
 			<Target title="Release">
 				<Option output="bin/Release/minesweeper" prefix_auto="1" extension_auto="1" />
@@ -33,12 +36,13 @@
 		<Compiler>
 			<Add option="-Wall" />
 		</Compiler>
+		<Unit filename="include/BitmapLoader.h" />
 		<Unit filename="include/Cell.h" />
 		<Unit filename="include/Window.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="src/BitmapLoader.cpp" />
 		<Unit filename="src/Cell.cpp" />
 		<Unit filename="src/Window.cpp" />
-		<Unit filename="temp.cpp" />
 		<Extensions>
 			<lib_finder disable_auto="1" />
 		</Extensions>
