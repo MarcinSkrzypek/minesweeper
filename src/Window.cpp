@@ -42,9 +42,17 @@ LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             window->onCommand(wmId);
             break;
         }
-        case WM_RBUTTONDOWN: {
-            POINTS pt = MAKEPOINTS(lparam);
-            window->onRightClick(pt);
+        case WM_CONTEXTMENU:{
+            HWND hwndControl = (HWND)wparam;
+            for (int i = 0; i < window->rows; ++i) {
+                for (int j = 0; j < window->cols; ++j) {
+                    if (window->cells[i][j] && window->cells[i][j]->getHandle() == hwndControl) {
+                        int id = 100 + (i + j * window->cols);
+                        window->onRightClick(id);
+                        break;
+                    }
+                }
+            }
             break;
         }
         default: {
@@ -148,7 +156,7 @@ void Window::onCommand(int wmId) {
     // TODO:
 }
 
-void Window::onRightClick(POINTS pt) {
+void Window::onRightClick(int wmId) {
     // TODO:
 }
 

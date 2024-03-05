@@ -23,7 +23,7 @@ public:
     void onUpdate();
     void onDestroy();
     void onCommand(int wmId); // Handle left-click actions
-    void onRightClick(POINTS pt); // Handle right-click actions
+    void onRightClick(int wmId); // Handle right-click actions
 
 
 private:
