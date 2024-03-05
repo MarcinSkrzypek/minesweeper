@@ -3,7 +3,9 @@
 
 int main()
 {
-    Window app;
+    Minefield minefield;
+    BitmapLoader bitmapLoader;
+    Window app(minefield, bitmapLoader);
     if (app.init())
     {
         while (app.isRun())

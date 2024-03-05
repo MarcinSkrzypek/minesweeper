@@ -1,18 +1,12 @@
 #include "Window.h"
-#include "Cell.h"
-#include "BitmapLoader.h"
-#include "Minefield.h"
 
-BitmapLoader bitmapLoader;
-Minefield minefield;
+Window::Window(Minefield& minefield, BitmapLoader& bitmapLoader)
+    : m_is_run(false), minefield(minefield), m_hwnd(NULL), m_hInst(GetModuleHandle(nullptr)), bitmapLoader(bitmapLoader), minefieldView(nullptr) {
+}
 
-Window::Window() : m_is_run(false), cells(nullptr), rows(minefield.getRows()), cols(minefield.getColumns()) {
-    cells = new Cell**[rows];
-    for (int i = 0; i < rows; ++i) {
-        cells[i] = new Cell*[cols];
-        for (int j = 0; j < cols; ++j) {
-            cells[i][j] = nullptr;
-        }
+Window::~Window() {
+    if (minefieldView) {
+        delete minefieldView;
     }
 }
 
@@ -24,7 +18,6 @@ LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             LPCREATESTRUCT pcs = reinterpret_cast<LPCREATESTRUCT>(lparam);
             window = static_cast<Window*>(pcs->lpCreateParams);
             SetWindowLongPtr(hwnd, GWLP_USERDATA, (LONG_PTR)window);
-            window->m_hwnd = hwnd;
             break;
         }
 
@@ -44,27 +37,19 @@ LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
         }
         case WM_COMMAND: {
             int wmId = LOWORD(wparam);
-            window->onCommand(wmId);
+            window->minefieldView->handleCellLeftClick(wmId);
             break;
         }
         case WM_CONTEXTMENU:{
             HWND hwndControl = (HWND)wparam;
-            for (int i = 0; i < window->rows; ++i) {
-                for (int j = 0; j < window->cols; ++j) {
-                    if (window->cells[i][j] && window->cells[i][j]->getHandle() == hwndControl) {
-                        int id = 100 + (i * window->cols + j);
-                        window->onRightClick(id);
-                        break;
-                    }
-                }
-            }
+            window->minefieldView->handleCellRightClick(hwndControl);
             break;
         }
         default: {
             return DefWindowProc(hwnd, msg, wparam, lparam);
         }
     }
-    return NULL;
+    return 0;
 }
 
 
@@ -96,11 +81,11 @@ bool Window::init() {
                  WS_OVERLAPPEDWINDOW,
                  CW_USEDEFAULT,
                  CW_USEDEFAULT,
-                 32*cols+32,
-                 32*rows+106,
+                 32*minefield.getColumns()+32,
+                 32*minefield.getRows()+106,
                  NULL, NULL, GetModuleHandle(nullptr), this);
 
-    SetLayeredWindowAttributes(m_hwnd, NULL, 255, LWA_ALPHA);
+    SetLayeredWindowAttributes(m_hwnd, 0, 255, LWA_ALPHA);
 
     if (!m_hwnd)
     {
@@ -110,6 +95,8 @@ bool Window::init() {
 
     ShowWindow(m_hwnd, SW_SHOW);
     UpdateWindow(m_hwnd);
+
+    minefieldView = new MinefieldView(minefield, m_hwnd, m_hInst, bitmapLoader);
 
     onCreate();
 
@@ -144,140 +131,14 @@ bool Window::isRun() {
 }
 
 void Window::onCreate() {
-    bitmapLoader.loadImages();
-    createCells();
-    minefield.show();
+    minefieldView->initialize();
+    minefield.show(); // TODO: Remove later
 }
 
 void Window::onUpdate() {
 
 }
 
-void Window::onCommand(int wmId) {
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
-            if (cells[i][j] && cells[i][j]->getId() == wmId) {
-                cellReveal(i, j);
-                return;
-            }
-        }
-    }
-}
-
-void Window::onRightClick(int wmId)
-{
-    for (int i = 0; i < rows; ++i)
-    {
-        for (int j = 0; j < cols; ++j)
-        {
-            if (cells[i][j] && cells[i][j]->getId() == wmId)
-            {
-                updateCellOnRightClick(cells[i][j]);
-                return;
-            }
-        }
-    }
-}
-
 void Window::onDestroy() {
     m_is_run = false;
-}
-
-Window::~Window() {
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
-            delete cells[i][j];
-        }
-        delete[] cells[i];
-    }
-    delete[] cells;
-}
-
-void Window::createCells() {
-    for (int i = 0; i < rows; ++i) {
-      for (int j = 0; j < cols; ++j) {
-        int id = 100 + (i * cols + j);
-            cells[i][j] = new Cell(m_hwnd, GetModuleHandle(nullptr), 8 + 32 * j, 56 + 32 * i, 32, 32, id);
-        }
-    }
-}
-
-void Window::cellReveal(int i, int j)
-{
-    int fieldValue = minefield.check(i, j);
-
-    if (fieldValue == 0)
-    {
-        cascadeReveal(i, j);
-    }
-    else
-    {
-        HBITMAP bitmap = bitmapLoader.getBitmapForValue(fieldValue);
-        if (bitmap != nullptr)
-        {
-            SendMessage(cells[i][j]->getHandle(), BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)bitmap);
-            cells[i][j]->setState(CellState::Revealed);
-        }
-    }
-}
-
-void Window::cascadeReveal(int i, int j) {
-    if (cells[i][j]->getState() == CellState::Revealed) {
-        return;
-    }
-
-    HBITMAP bitmap = bitmapLoader.getBitmapForValue(minefield.check(i, j));
-    if (bitmap != nullptr) {
-        SendMessage(cells[i][j]->getHandle(), BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)bitmap);
-        cells[i][j]->setState(CellState::Revealed);
-    }
-
-    if (minefield.check(i, j) != 0) {
-        return;
-    }
-
-    for (int di = -1; di <= 1; ++di) {
-        for (int dj = -1; dj <= 1; ++dj) {
-            int newI = i + di;
-            int newJ = j + dj;
-
-            if (di == 0 && dj == 0) continue;
-
-            if (minefield.isValidCell(newI, newJ)) {
-                if (cells[newI][newJ]->getState() != CellState::Revealed) {
-                    cascadeReveal(newI, newJ);
-                }
-            }
-        }
-    }
-}
-
-void Window::updateCellOnRightClick(Cell* cell)
-{
-    HBITMAP bitmap = nullptr;
-    switch(cell->getState())
-    {
-    case CellState::Unrevealed:
-        bitmap = bitmapLoader.getImage(L"MinesGuess");
-        cell->setState(CellState::Guessed);
-        break;
-    case CellState::Revealed:
-        return;
-    case CellState::Questioned:
-        cell->setState(CellState::Unrevealed);
-        break;
-    case CellState::Guessed:
-        bitmap = bitmapLoader.getImage(L"QuestionMark");
-        cell->setState(CellState::Questioned);
-        break;
-    }
-
-    if (bitmap != nullptr)
-    {
-        SendMessage(cell->getHandle(), BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)bitmap);
-    }
-    else
-    {
-        SendMessage(cell->getHandle(), BM_SETIMAGE, IMAGE_BITMAP, NULL);
-    }
 }
