@@ -43,3 +43,32 @@ HBITMAP BitmapLoader::getImage(const std::wstring& imageName) const {
     }
     return nullptr;
 }
+
+HBITMAP BitmapLoader::getBitmapForValue(int value) const
+{
+    switch (value)
+    {
+    case 0:
+        return getImage(L"Zero");
+    case 1:
+        return getImage(L"One");
+    case 2:
+        return getImage(L"Two");
+    case 3:
+        return getImage(L"Three");
+    case 4:
+        return getImage(L"Four");
+    case 5:
+        return getImage(L"Five");
+    case 6:
+        return getImage(L"Six");
+    case 7:
+        return getImage(L"Seven");
+    case 8:
+        return getImage(L"Eight");
+    case 9:
+        return getImage(L"Mines");
+    default:
+        return nullptr;
+    }
+}

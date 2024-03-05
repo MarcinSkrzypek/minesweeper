@@ -38,10 +38,13 @@
 		</Compiler>
 		<Unit filename="include/BitmapLoader.h" />
 		<Unit filename="include/Cell.h" />
+		<Unit filename="include/CellState.h" />
+		<Unit filename="include/Minefield.h" />
 		<Unit filename="include/Window.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/BitmapLoader.cpp" />
 		<Unit filename="src/Cell.cpp" />
+		<Unit filename="src/Minefield.cpp" />
 		<Unit filename="src/Window.cpp" />
 		<Extensions>
 			<lib_finder disable_auto="1" />

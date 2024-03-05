@@ -1,7 +1,7 @@
 #include "Cell.h"
 
 Cell::Cell(HWND parentHWND, HINSTANCE hInst, int x, int y, int width, int height, int id)
-    : parentHWND(parentHWND), hInstance(hInst), x(x), y(y), width(width), height(height), id(id) {
+    : parentHWND(parentHWND), hInstance(hInst), x(x), y(y), width(width), height(height), id(id), state(CellState::Unrevealed) {
     create();
 }
 
@@ -23,4 +23,12 @@ HWND Cell::getHandle() const {
 
 int Cell::getId() const {
     return id;
+}
+
+CellState Cell::getState() const {
+    return state;
+}
+
+void Cell::setState(CellState newState) {
+    state = newState;
 }

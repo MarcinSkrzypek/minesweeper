@@ -5,8 +5,6 @@
 #include "Cell.h"
 #include <vector>
 
-using namespace std;
-
 class Window
 {
 public:
@@ -25,6 +23,10 @@ public:
     void onCommand(int wmId); // Handle left-click actions
     void onRightClick(int wmId); // Handle right-click actions
 
+    void createCells();
+    void cellReveal(int i, int j);
+    void cascadeReveal(int i, int j);
+    void updateCellOnRightClick(Cell* cell);
 
 private:
     static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
@@ -32,8 +34,6 @@ private:
     bool m_is_run;
     Cell ***cells;
     int rows, cols;
-
-    void createCells();
 };
 
 #endif // WINDOW_H

@@ -1,10 +1,12 @@
 #include "Window.h"
 #include "Cell.h"
 #include "BitmapLoader.h"
+#include "Minefield.h"
 
 BitmapLoader bitmapLoader;
+Minefield minefield;
 
-Window::Window() : m_is_run(false), cells(nullptr), rows(10), cols(10) {
+Window::Window() : m_is_run(false), cells(nullptr), rows(minefield.getRows()), cols(minefield.getColumns()) {
     cells = new Cell**[rows];
     for (int i = 0; i < rows; ++i) {
         cells[i] = new Cell*[cols];
@@ -50,7 +52,7 @@ LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             for (int i = 0; i < window->rows; ++i) {
                 for (int j = 0; j < window->cols; ++j) {
                     if (window->cells[i][j] && window->cells[i][j]->getHandle() == hwndControl) {
-                        int id = 100 + (i + j * window->cols);
+                        int id = 100 + (i * window->cols + j);
                         window->onRightClick(id);
                         break;
                     }
@@ -66,8 +68,7 @@ LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 }
 
 
-bool Window::init()
-{
+bool Window::init() {
     WNDCLASSEX wc = {};
     wc.cbSize = sizeof(WNDCLASSEX);
     wc.style = CS_HREDRAW | CS_VREDRAW;
@@ -118,8 +119,7 @@ bool Window::init()
     return true;
 }
 
-bool Window::broadcast()
-{
+bool Window::broadcast() {
     MSG msg;
     while (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE) > 0)
     {
@@ -131,8 +131,7 @@ bool Window::broadcast()
     return true;
 }
 
-bool Window::release()
-{
+bool Window::release() {
     if (!DestroyWindow(m_hwnd))
     {
         return false;
@@ -140,62 +139,49 @@ bool Window::release()
     return true;
 }
 
-bool Window::isRun()
-{
+bool Window::isRun() {
     return m_is_run;
 }
 
-void Window::onCreate()
-{
+void Window::onCreate() {
     bitmapLoader.loadImages();
     createCells();
+    minefield.show();
 }
 
-void Window::onUpdate()
-{
+void Window::onUpdate() {
 
 }
 
 void Window::onCommand(int wmId) {
-    // TODO:
     for (int i = 0; i < rows; ++i) {
         for (int j = 0; j < cols; ++j) {
             if (cells[i][j] && cells[i][j]->getId() == wmId) {
-                HBITMAP oneBitmap = bitmapLoader.getImage(L"One");
-                SendMessage(cells[i][j]->getHandle(), BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)oneBitmap);
-                break;
+                cellReveal(i, j);
+                return;
             }
         }
     }
 }
 
-void Window::onRightClick(int wmId) {
-    // TODO:
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
-            if (cells[i][j] && cells[i][j]->getId() == wmId) {
-                HBITMAP qmBitmap = bitmapLoader.getImage(L"QuestionMark");
-                SendMessage(cells[i][j]->getHandle(), BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)qmBitmap);
-                break;
-            }
-        }
-    }
-}
-
-void Window::onDestroy()
+void Window::onRightClick(int wmId)
 {
+    for (int i = 0; i < rows; ++i)
+    {
+        for (int j = 0; j < cols; ++j)
+        {
+            if (cells[i][j] && cells[i][j]->getId() == wmId)
+            {
+                updateCellOnRightClick(cells[i][j]);
+                return;
+            }
+        }
+    }
+}
+
+void Window::onDestroy() {
     m_is_run = false;
 }
-
-void Window::createCells() {
-    for(int i = 0; i < rows; ++i) {
-        for(int j = 0; j < cols; ++j) {
-            int id = 100 + (i + j * cols);
-            cells[i][j] = new Cell(m_hwnd, GetModuleHandle(nullptr), 8 + 32 * i, 56 + 32 * j, 32, 32, id);
-        }
-    }
-}
-
 
 Window::~Window() {
     for (int i = 0; i < rows; ++i) {
@@ -205,4 +191,93 @@ Window::~Window() {
         delete[] cells[i];
     }
     delete[] cells;
+}
+
+void Window::createCells() {
+    for (int i = 0; i < rows; ++i) {
+      for (int j = 0; j < cols; ++j) {
+        int id = 100 + (i * cols + j);
+            cells[i][j] = new Cell(m_hwnd, GetModuleHandle(nullptr), 8 + 32 * j, 56 + 32 * i, 32, 32, id);
+        }
+    }
+}
+
+void Window::cellReveal(int i, int j)
+{
+    int fieldValue = minefield.check(i, j);
+
+    if (fieldValue == 0)
+    {
+        cascadeReveal(i, j);
+    }
+    else
+    {
+        HBITMAP bitmap = bitmapLoader.getBitmapForValue(fieldValue);
+        if (bitmap != nullptr)
+        {
+            SendMessage(cells[i][j]->getHandle(), BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)bitmap);
+            cells[i][j]->setState(CellState::Revealed);
+        }
+    }
+}
+
+void Window::cascadeReveal(int i, int j) {
+    if (cells[i][j]->getState() == CellState::Revealed) {
+        return;
+    }
+
+    HBITMAP bitmap = bitmapLoader.getBitmapForValue(minefield.check(i, j));
+    if (bitmap != nullptr) {
+        SendMessage(cells[i][j]->getHandle(), BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)bitmap);
+        cells[i][j]->setState(CellState::Revealed);
+    }
+
+    if (minefield.check(i, j) != 0) {
+        return;
+    }
+
+    for (int di = -1; di <= 1; ++di) {
+        for (int dj = -1; dj <= 1; ++dj) {
+            int newI = i + di;
+            int newJ = j + dj;
+
+            if (di == 0 && dj == 0) continue;
+
+            if (minefield.isValidCell(newI, newJ)) {
+                if (cells[newI][newJ]->getState() != CellState::Revealed) {
+                    cascadeReveal(newI, newJ);
+                }
+            }
+        }
+    }
+}
+
+void Window::updateCellOnRightClick(Cell* cell)
+{
+    HBITMAP bitmap = nullptr;
+    switch(cell->getState())
+    {
+    case CellState::Unrevealed:
+        bitmap = bitmapLoader.getImage(L"MinesGuess");
+        cell->setState(CellState::Guessed);
+        break;
+    case CellState::Revealed:
+        return;
+    case CellState::Questioned:
+        cell->setState(CellState::Unrevealed);
+        break;
+    case CellState::Guessed:
+        bitmap = bitmapLoader.getImage(L"QuestionMark");
+        cell->setState(CellState::Questioned);
+        break;
+    }
+
+    if (bitmap != nullptr)
+    {
+        SendMessage(cell->getHandle(), BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)bitmap);
+    }
+    else
+    {
+        SendMessage(cell->getHandle(), BM_SETIMAGE, IMAGE_BITMAP, NULL);
+    }
 }

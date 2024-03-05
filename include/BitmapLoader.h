@@ -13,6 +13,7 @@ public:
 
     void loadImages();
     HBITMAP getImage(const std::wstring& imageName) const;
+    HBITMAP getBitmapForValue(int value) const;
 
 private:
     std::map<std::wstring, HBITMAP> images;
