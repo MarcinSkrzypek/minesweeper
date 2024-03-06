@@ -81,10 +81,19 @@ void MinefieldView::updateCellOnRightClick(Cell* cell) {
     SendMessage(cell->getHandle(), BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)bitmap);
 }
 
-void MinefieldView::revealCell(int i, int j) {
+void MinefieldView::revealCell(int i, int j)
+{
     int fieldValue = minefield.check(i, j);
 
-    if (fieldValue != 0)
+    if (fieldValue == 9)
+    {
+        revealAllMines();
+    }
+    else if (fieldValue == 0)
+    {
+        cascadeReveal(i, j);
+    }
+    else
     {
         HBITMAP bitmap = bitmapLoader.getBitmapForValue(fieldValue);
         if (bitmap != nullptr)
@@ -93,10 +102,7 @@ void MinefieldView::revealCell(int i, int j) {
             cells[i][j]->setState(CellState::Revealed);
         }
     }
-    else
-    {
-        cascadeReveal(i, j);
-    }
+
 }
 
 void MinefieldView::cascadeReveal(int i, int j) {
@@ -126,6 +132,21 @@ void MinefieldView::cascadeReveal(int i, int j) {
                     cascadeReveal(newI, newJ);
                 }
             }
+        }
+    }
+}
+
+void MinefieldView::revealAllMines() {
+    auto minePositions = minefield.getMinePositions();
+
+    for (int i = 0; i < minefield.getNumberOfMines(); ++i) {
+        int row = minePositions[i].first;
+        int col = minePositions[i].second;
+
+        HBITMAP bitmap = bitmapLoader.getBitmapForValue(9);
+        if (bitmap != nullptr) {
+            SendMessage(cells[row][col]->getHandle(), BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)bitmap);
+            cells[row][col]->setState(CellState::Revealed);
         }
     }
 }

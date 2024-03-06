@@ -1,12 +1,11 @@
 #include "Minefield.h"
-#include <cstdlib>
-#include <ctime>
 #include <iostream>
 
 Minefield::Minefield() {
     this->rows = 10;
     this->columns = 10;
     this->numberOfMines = 5;
+    this->minePositions = nullptr;
 
     field = new int*[rows];
     for(int i = 0; i < rows; ++i) {
@@ -21,12 +20,15 @@ Minefield::~Minefield() {
         delete[] field[i];
     }
     delete[] field;
+    delete[] minePositions;
 }
 
 void Minefield::setMines() {
     srand(time(NULL));
     int minesSet = 0;
     const int total_cells = rows * columns;
+    minePositions = new std::pair<int, int>[numberOfMines];
+
     while (minesSet < numberOfMines) {
         int ind = rand() % total_cells;
         int row = ind / columns;
@@ -34,6 +36,7 @@ void Minefield::setMines() {
 
         if (field[row][col] != 9) {
             field[row][col] = 9;
+            minePositions[minesSet] = std::make_pair(row, col);
             minesSet++;
             updateCellsAround(row, col);
         }
@@ -73,14 +76,14 @@ int Minefield::getNumberOfMines() {
     return numberOfMines;
 }
 
-int* Minefield::getMines() {
-    return minesOnField;
-}
-
 int Minefield::getRows() {
     return rows;
 }
 
 int Minefield::getColumns() {
     return columns;
+}
+
+std::pair<int, int>* Minefield::getMinePositions() const {
+    return minePositions;
 }

@@ -1,8 +1,9 @@
 #ifndef MINEFIELD_H
 #define MINEFIELD_H
 
-#include <iostream>
+#include <cstdlib>
 #include <ctime>
+#include <utility>
 
 class Minefield
 {
@@ -16,7 +17,7 @@ class Minefield
         bool isValidCell(int row, int col);
         int check(int row, int column);
         int getNumberOfMines();
-        int* getMines();
+        std::pair<int,int>* getMinePositions() const;
         int getRows();
         int getColumns();
 
@@ -25,7 +26,7 @@ class Minefield
         int columns;
         int** field;
         int numberOfMines;
-        int* minesOnField;
+        std::pair<int,int>* minePositions;
 };
 
 #endif // MINEFIELD_H
