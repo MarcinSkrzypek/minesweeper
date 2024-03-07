@@ -42,13 +42,13 @@ LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             switch (wmId)
             {
             case IDM_NEW_GAME:
-                GameMenu::commandHandler(hwnd, msg, wparam, lparam);
+                window->gameMenu.commandHandler(hwnd, msg, wparam, lparam);
                 break;
             case IDM_DIFFICULTY:
-                GameMenu::commandHandler(hwnd, msg, wparam, lparam);
+                window->gameMenu.commandHandler(hwnd, msg, wparam, lparam);
                 break;
             case IDM_EXIT:
-                GameMenu::commandHandler(hwnd, msg, wparam, lparam);
+                window->gameMenu.commandHandler(hwnd, msg, wparam, lparam);
                 break;
             default:
                 window->minefieldView->handleCellLeftClick(wmId);
@@ -147,7 +147,7 @@ bool Window::isRun() {
 }
 
 void Window::onCreate() {
-    gameMenu.initialize(m_hwnd, GetModuleHandle(nullptr));
+    gameMenu.initialize(m_hwnd, GetModuleHandle(nullptr), minefieldView);
     minefieldView->initialize();
     minefield.show(); // TODO: Remove later
 }

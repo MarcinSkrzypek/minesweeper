@@ -87,3 +87,24 @@ int Minefield::getColumns() {
 std::pair<int, int>* Minefield::getMinePositions() const {
     return minePositions;
 }
+
+void Minefield::resetGame() {
+    clearField();
+    setMines();
+    std::cout<<std::endl; // TODO: Remove later
+    show();
+}
+
+void Minefield::clearField() {
+    for(int i = 0; i < rows; ++i) {
+        delete[] field[i];
+    }
+    delete[] field;
+    delete[] minePositions;
+
+    field = new int*[rows];
+    for(int i = 0; i < rows; ++i) {
+        field[i] = new int[columns]{0};
+    }
+    minePositions = nullptr;
+}

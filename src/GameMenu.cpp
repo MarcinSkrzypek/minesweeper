@@ -1,11 +1,11 @@
 #include "GameMenu.h"
-#include <iostream>
 
-GameMenu::GameMenu() : parentHwnd(nullptr), hInst(nullptr), hMenu(nullptr) {}
+GameMenu::GameMenu(Minefield& minefield) : minefield(minefield), minefieldView(nullptr), parentHwnd(nullptr), hInst(nullptr), hMenu(nullptr) {}
 
-void GameMenu::initialize(HWND parentHwnd, HINSTANCE hInst) {
+void GameMenu::initialize(HWND parentHwnd, HINSTANCE hInst, MinefieldView* minefieldView) {
     this->parentHwnd = parentHwnd;
     this->hInst = hInst;
+    this->minefieldView = minefieldView;
     setupMenu();
 }
 
@@ -26,7 +26,8 @@ void GameMenu::setupMenu() {
 void GameMenu::commandHandler(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam) {
     switch(LOWORD(wParam)) {
         case IDM_NEW_GAME:
-            MessageBoxW(hwnd, L"New game started!", L"Info", MB_OK | MB_ICONINFORMATION);
+            minefield.resetGame();
+            minefieldView->resetCells();
             break;
         case IDM_DIFFICULTY:
             MessageBoxW(hwnd, L"Difficulty settings", L"Info", MB_OK | MB_ICONINFORMATION);

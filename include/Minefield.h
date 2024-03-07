@@ -12,6 +12,8 @@ class Minefield
         virtual ~Minefield();
 
         void setMines();
+        void resetGame();
+        void clearField();
         void show();
         void updateCellsAround(int row, int col);
         bool isValidCell(int row, int col);

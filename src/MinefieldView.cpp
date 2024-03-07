@@ -150,3 +150,15 @@ void MinefieldView::revealAllMines() {
         }
     }
 }
+
+void MinefieldView::resetCells()
+{
+    for (auto& row : cells)
+    {
+        for (auto* cell : row)
+        {
+            SendMessage(cell->getHandle(), BM_SETIMAGE, IMAGE_BITMAP, (LPARAM)NULL);
+            cell->setState(CellState::Unrevealed);
+        }
+    }
+}
