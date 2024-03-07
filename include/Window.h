@@ -5,11 +5,13 @@
 #include "Cell.h"
 #include "Minefield.h"
 #include "MinefieldView.h"
+#include "GameMenu.h"
+#include "Resource.h"
 
 class Window
 {
 public:
-    Window(Minefield& minefield, BitmapLoader& bitmapLoader);
+    Window(Minefield& minefield, BitmapLoader& bitmapLoader, GameMenu& gameMenu);
     ~Window();
 
     bool init();
@@ -30,6 +32,7 @@ private:
     HINSTANCE m_hInst;
     BitmapLoader& bitmapLoader;
     MinefieldView* minefieldView;
+    GameMenu& gameMenu;
 };
 
 #endif // WINDOW_H

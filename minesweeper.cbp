@@ -39,12 +39,15 @@
 		<Unit filename="include/BitmapLoader.h" />
 		<Unit filename="include/Cell.h" />
 		<Unit filename="include/CellState.h" />
+		<Unit filename="include/GameMenu.h" />
 		<Unit filename="include/Minefield.h" />
 		<Unit filename="include/MinefieldView.h" />
+		<Unit filename="include/Resource.h" />
 		<Unit filename="include/Window.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="src/BitmapLoader.cpp" />
 		<Unit filename="src/Cell.cpp" />
+		<Unit filename="src/GameMenu.cpp" />
 		<Unit filename="src/Minefield.cpp" />
 		<Unit filename="src/MinefieldView.cpp" />
 		<Unit filename="src/Window.cpp" />

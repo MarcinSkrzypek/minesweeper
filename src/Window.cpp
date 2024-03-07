@@ -1,7 +1,8 @@
 #include "Window.h"
 
-Window::Window(Minefield& minefield, BitmapLoader& bitmapLoader)
-    : m_is_run(false), minefield(minefield), m_hwnd(NULL), m_hInst(GetModuleHandle(nullptr)), bitmapLoader(bitmapLoader), minefieldView(nullptr) {
+Window::Window(Minefield& minefield, BitmapLoader& bitmapLoader, GameMenu& gameMenu)
+    : m_is_run(false), minefield(minefield), m_hwnd(NULL), m_hInst(GetModuleHandle(nullptr)),
+    bitmapLoader(bitmapLoader), minefieldView(nullptr), gameMenu(gameMenu) {
 }
 
 Window::~Window() {
@@ -35,9 +36,24 @@ LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             PostQuitMessage(0);
             break;
         }
-        case WM_COMMAND: {
+        case WM_COMMAND:
+        {
             int wmId = LOWORD(wparam);
-            window->minefieldView->handleCellLeftClick(wmId);
+            switch (wmId)
+            {
+            case IDM_NEW_GAME:
+                GameMenu::commandHandler(hwnd, msg, wparam, lparam);
+                break;
+            case IDM_DIFFICULTY:
+                GameMenu::commandHandler(hwnd, msg, wparam, lparam);
+                break;
+            case IDM_EXIT:
+                GameMenu::commandHandler(hwnd, msg, wparam, lparam);
+                break;
+            default:
+                window->minefieldView->handleCellLeftClick(wmId);
+                break;
+            }
             break;
         }
         case WM_CONTEXTMENU:{
@@ -131,6 +147,7 @@ bool Window::isRun() {
 }
 
 void Window::onCreate() {
+    gameMenu.initialize(m_hwnd, GetModuleHandle(nullptr));
     minefieldView->initialize();
     minefield.show(); // TODO: Remove later
 }
