@@ -12,7 +12,7 @@ class Minefield
         virtual ~Minefield();
 
         void setMines();
-        void resetGame();
+        void resetGame(int rows, int cols, int numberOfMines);
         void clearField();
         void show();
         void updateCellsAround(int row, int col);

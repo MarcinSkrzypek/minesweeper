@@ -88,9 +88,14 @@ std::pair<int, int>* Minefield::getMinePositions() const {
     return minePositions;
 }
 
-void Minefield::resetGame() {
+void Minefield::resetGame(int rows, int cols, int numberOfMines) {
+    this->rows = rows;
+    this->columns = cols;
+    this->numberOfMines = numberOfMines;
+
     clearField();
     setMines();
+    
     std::cout<<std::endl; // TODO: Remove later
     show();
 }

@@ -22,4 +22,6 @@ private:
     void setupMenu();
 };
 
+INT_PTR CALLBACK DifficultyDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam);
+
 #endif // GAMEMENU_H

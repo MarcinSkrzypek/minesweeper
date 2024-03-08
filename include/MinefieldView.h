@@ -19,7 +19,7 @@ public:
     void updateCellOnRightClick(Cell* cell);
     void cascadeReveal(int i, int j);
     void revealAllMines();
-    void resetCells();
+    void resetCells(int rows, int cols);
 
 private:
     Minefield& minefield;

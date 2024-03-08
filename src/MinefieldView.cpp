@@ -151,14 +151,11 @@ void MinefieldView::revealAllMines() {
     }
 }
 
-void MinefieldView::resetCells()
+void MinefieldView::resetCells(int rows, int cols)
 {
-    for (auto& row : cells)
-    {
-        for (auto* cell : row)
-        {
-            SendMessage(cell->getHandle(), BM_SETIMAGE, IMAGE_BITMAP, (LPARAM)NULL);
-            cell->setState(CellState::Unrevealed);
-        }
-    }
+    this->rows = rows;
+    this->columns = cols;
+
+    releaseCells();
+    createCells();
 }

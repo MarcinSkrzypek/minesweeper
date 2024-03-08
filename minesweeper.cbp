@@ -45,6 +45,9 @@
 		<Unit filename="include/Resource.h" />
 		<Unit filename="include/Window.h" />
 		<Unit filename="main.cpp" />
+		<Unit filename="resources/diffDialog.rc">
+			<Option compilerVar="WINDRES" />
+		</Unit>
 		<Unit filename="src/BitmapLoader.cpp" />
 		<Unit filename="src/Cell.cpp" />
 		<Unit filename="src/GameMenu.cpp" />
