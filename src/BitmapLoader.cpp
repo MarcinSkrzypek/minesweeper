@@ -2,18 +2,23 @@
 #include <map>
 #include <string>
 
-BitmapLoader::BitmapLoader() {
+BitmapLoader::BitmapLoader()
+{
 }
 
-BitmapLoader::~BitmapLoader() {
-    for (auto& pair : images) {
-        if (pair.second) {
+BitmapLoader::~BitmapLoader()
+{
+    for (auto& pair : images)
+    {
+        if (pair.second)
+        {
             DeleteObject(pair.second);
         }
     }
 }
 
-void BitmapLoader::loadImages() {
+void BitmapLoader::loadImages()
+{
     images[L"Zero"] = loadImage(L"icons/Zero.bmp");
     images[L"One"] = loadImage(L"icons/One.bmp");
     images[L"Two"] = loadImage(L"icons/Two.bmp");
@@ -28,17 +33,21 @@ void BitmapLoader::loadImages() {
     images[L"QuestionMark"] = loadImage(L"icons/QuestionMark.bmp");
 }
 
-HBITMAP BitmapLoader::loadImage(const wchar_t* imagePath) {
+HBITMAP BitmapLoader::loadImage(const wchar_t* imagePath)
+{
     HBITMAP image = (HBITMAP)LoadImageW(NULL, imagePath, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
-    if (!image) {
+    if (!image)
+    {
         MessageBoxW(NULL, L"Failed to load image.", L"Error", MB_OK | MB_ICONERROR);
     }
     return image;
 }
 
-HBITMAP BitmapLoader::getImage(const std::wstring& imageName) const {
+HBITMAP BitmapLoader::getImage(const std::wstring& imageName) const
+{
     auto it = images.find(imageName);
-    if (it != images.end()) {
+    if (it != images.end())
+    {
         return it->second;
     }
     return nullptr;

@@ -6,7 +6,8 @@
 #include "MinefieldView.h"
 #include "Resource.h"
 
-class GameMenu {
+class GameMenu
+{
 public:
     GameMenu(Minefield& minefield);
     void initialize(HWND parentHwnd, HINSTANCE hInst, MinefieldView* minefieldView);

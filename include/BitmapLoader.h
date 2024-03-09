@@ -6,7 +6,8 @@
 #include <map>
 #include <string>
 
-class BitmapLoader {
+class BitmapLoader
+{
 public:
     BitmapLoader();
     ~BitmapLoader();
