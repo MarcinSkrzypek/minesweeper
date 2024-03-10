@@ -5,6 +5,9 @@
 #include "Minefield.h"
 #include "MinefieldView.h"
 #include "Resource.h"
+#include "GameConfig.h"
+#include "DifficultyLevel.h"
+#include <tchar.h>
 
 class GameMenu
 {

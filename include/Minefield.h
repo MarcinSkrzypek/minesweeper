@@ -14,6 +14,7 @@ public:
     void setMines();
     void resetGame(int rows, int cols, int numberOfMines);
     void clearField();
+    void allocateField();
     void show();
     void updateCellsAround(int row, int col);
     bool isValidCell(int row, int col);

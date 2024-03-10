@@ -7,6 +7,8 @@
 #include "MinefieldView.h"
 #include "GameMenu.h"
 #include "Resource.h"
+#include "GameConfig.h"
+#include "DifficultyLevel.h"
 
 class Window
 {

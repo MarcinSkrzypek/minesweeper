@@ -48,60 +48,160 @@ void GameMenu::commandHandler(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
     }
 }
 
+// Helper function for DifficultyDialogProc CALLBACK
+void SetDialogControls(HWND hDlg, DifficultyLevel difficulty, Minefield* minefield, BOOL isInit)
+{
+    int radioButtonID = IDC_RADIO_CUSTOM;
+    switch(difficulty) {
+        case DifficultyLevel::Beginner:
+            radioButtonID = IDC_RADIO_BEGINNER;
+            break;
+        case DifficultyLevel::Intermediate:
+            radioButtonID = IDC_RADIO_INTERMEDIATE;
+            break;
+        case DifficultyLevel::Expert:
+            radioButtonID = IDC_RADIO_EXPERT;
+            break;
+        case DifficultyLevel::Custom:
+            radioButtonID = IDC_RADIO_CUSTOM;
+            break;
+    }
+
+    CheckRadioButton(hDlg, IDC_RADIO_BEGINNER, IDC_RADIO_CUSTOM, radioButtonID);
+    BOOL enableFields = (difficulty == DifficultyLevel::Custom);
+
+    EnableWindow(GetDlgItem(hDlg, IDC_EDIT_ROWS), enableFields);
+    EnableWindow(GetDlgItem(hDlg, IDC_EDIT_COLS), enableFields);
+    EnableWindow(GetDlgItem(hDlg, IDC_EDIT_MINES), enableFields);
+
+    SendMessage(GetDlgItem(hDlg, IDC_EDIT_ROWS), EM_SETREADONLY, !enableFields, 0);
+    SendMessage(GetDlgItem(hDlg, IDC_EDIT_COLS), EM_SETREADONLY, !enableFields, 0);
+    SendMessage(GetDlgItem(hDlg, IDC_EDIT_MINES), EM_SETREADONLY, !enableFields, 0);
+
+    if (!isInit && difficulty != DifficultyLevel::Custom) {
+        auto settings = GameConfig::getDifficultySettings(difficulty);
+        SetDlgItemInt(hDlg, IDC_EDIT_ROWS, settings.rows, FALSE);
+        SetDlgItemInt(hDlg, IDC_EDIT_COLS, settings.cols, FALSE);
+        SetDlgItemInt(hDlg, IDC_EDIT_MINES, settings.mines, FALSE);
+    } else {
+        SetDlgItemInt(hDlg, IDC_EDIT_ROWS, minefield->getRows(), FALSE);
+        SetDlgItemInt(hDlg, IDC_EDIT_COLS, minefield->getColumns(), FALSE);
+        SetDlgItemInt(hDlg, IDC_EDIT_MINES, minefield->getNumberOfMines(), FALSE);
+    }
+}
+
+// Helper function for DifficultyDialogProc CALLBACK
+BOOL ValidateAndExtractInput(HWND hDlg, int& rows, int& cols, int& mines)
+{
+    TCHAR strRows[5], strCols[5], strMines[5];
+    GetDlgItemText(hDlg, IDC_EDIT_ROWS, strRows, 5);
+    GetDlgItemText(hDlg, IDC_EDIT_COLS, strCols, 5);
+    GetDlgItemText(hDlg, IDC_EDIT_MINES, strMines, 5);
+
+    rows = _tstoi(strRows);
+    cols = _tstoi(strCols);
+    mines = _tstoi(strMines);
+
+    if (rows < 1 || rows > GameConfig::MAX_ROWS)
+    {
+        MessageBoxW(hDlg, L"The number of rows is out of range.", L"Error", MB_ICONERROR);
+        return FALSE;
+    }
+    if (cols < 1 || cols > GameConfig::MAX_COLUMNS)
+    {
+        MessageBoxW(hDlg, L"The number of columns is out of range.", L"Error", MB_ICONERROR);
+        return FALSE;
+    }
+    if (mines < 1 || mines > rows * cols - 1)
+    {
+        MessageBoxW(hDlg, L"The number of mines is out of range.", L"Error", MB_ICONERROR);
+        return FALSE;
+    }
+    return TRUE;
+}
+
+// Helper function for DifficultyDialogProc CALLBACK
+void HandleDifficultySelection(HWND hDlg, WPARAM wParam, Minefield* minefield, MinefieldView* minefieldView)
+{
+    if(LOWORD(wParam) >= IDC_RADIO_BEGINNER && LOWORD(wParam) <= IDC_RADIO_CUSTOM)
+    {
+        DifficultyLevel newDifficulty;
+
+        if(LOWORD(wParam) == IDC_RADIO_BEGINNER)
+        {
+            newDifficulty = DifficultyLevel::Beginner;
+        }
+        else if(LOWORD(wParam) == IDC_RADIO_INTERMEDIATE)
+        {
+            newDifficulty = DifficultyLevel::Intermediate;
+        }
+        else if(LOWORD(wParam) == IDC_RADIO_EXPERT)
+        {
+            newDifficulty = DifficultyLevel::Expert;
+        }
+        else if(LOWORD(wParam) == IDC_RADIO_CUSTOM)
+        {
+            newDifficulty = DifficultyLevel::Custom;
+        }
+
+        SetDialogControls(hDlg, newDifficulty, minefield, FALSE);
+    }
+    if(LOWORD(wParam) == IDOK)
+    {
+        int rows, cols, mines;
+        if(ValidateAndExtractInput(hDlg, rows, cols, mines))
+        {
+            if (IsDlgButtonChecked(hDlg, IDC_RADIO_BEGINNER) == BST_CHECKED)
+            {
+                GameConfig::setCurrentDifficulty(DifficultyLevel::Beginner);
+            }
+            else if (IsDlgButtonChecked(hDlg, IDC_RADIO_INTERMEDIATE) == BST_CHECKED)
+            {
+                GameConfig::setCurrentDifficulty(DifficultyLevel::Intermediate);
+            }
+            else if (IsDlgButtonChecked(hDlg, IDC_RADIO_EXPERT) == BST_CHECKED)
+            {
+                GameConfig::setCurrentDifficulty(DifficultyLevel::Expert);
+            }
+            else if (IsDlgButtonChecked(hDlg, IDC_RADIO_CUSTOM) == BST_CHECKED)
+            {
+                GameConfig::setCurrentDifficulty(DifficultyLevel::Custom);
+            }
+
+            minefield->resetGame(rows, cols, mines);
+            minefieldView->resetCells(rows, cols);
+            EndDialog(hDlg, IDOK);
+        }
+    }
+    else if(LOWORD(wParam) == IDCANCEL)
+    {
+        EndDialog(hDlg, IDCANCEL);
+    }
+}
+
 INT_PTR CALLBACK DifficultyDialogProc(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
 {
     static Minefield* minefield = nullptr;
     static MinefieldView* minefieldView = nullptr;
 
-    if (message == WM_INITDIALOG)
+    switch (message)
+    {
+    case WM_INITDIALOG:
     {
         auto params = reinterpret_cast<std::pair<Minefield*, MinefieldView*>*>(lParam);
         minefield = params->first;
         minefieldView = params->second;
+
+        SetDialogControls(hDlg, GameConfig::getCurrentDifficulty(), minefield, TRUE);
+
         return (INT_PTR)TRUE;
     }
-
-    switch (message)
-    {
-    case WM_INITDIALOG:
+    case WM_CLOSE:
+        EndDialog(hDlg, IDCANCEL);
         return (INT_PTR)TRUE;
     case WM_COMMAND:
-        switch (LOWORD(wParam))
-        {
-        case IDOK:
-        {
-            int rows, cols, mines;
-            if (IsDlgButtonChecked(hDlg, IDC_RADIO_BEGINNER) == BST_CHECKED)
-            {
-                rows = cols = 9;
-                mines = 10;
-            }
-            else if (IsDlgButtonChecked(hDlg, IDC_RADIO_INTERMEDIATE) == BST_CHECKED)
-            {
-                rows = cols = 16;
-                mines = 40;
-            }
-            else if (IsDlgButtonChecked(hDlg, IDC_RADIO_EXPERT) == BST_CHECKED)
-            {
-                rows = 16;
-                cols = 30;
-                mines = 99;
-            }
-            else if (IsDlgButtonChecked(hDlg, IDC_RADIO_CUSTOM) == BST_CHECKED)
-            {
-                // TODO: Add custom difficulty
-            }
-
-            minefield->resetGame(rows, cols, mines);
-            minefieldView->resetCells(rows, cols);
-
-            EndDialog(hDlg, IDOK);
-            return (INT_PTR)TRUE;
-        }
-        case IDCANCEL:
-            EndDialog(hDlg, IDCANCEL);
-            return (INT_PTR)TRUE;
-        }
+        HandleDifficultySelection(hDlg, wParam, minefield, minefieldView);
+        return (INT_PTR)TRUE;
         break;
     }
     return (INT_PTR)FALSE;

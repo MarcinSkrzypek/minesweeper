@@ -160,6 +160,7 @@ bool Window::isRun()
 
 void Window::onCreate()
 {
+    GameConfig::setCurrentDifficulty(DifficultyLevel::Beginner);
     gameMenu.initialize(m_hwnd, GetModuleHandle(nullptr), minefieldView);
     minefieldView->initialize();
     minefield.show(); // TODO: Remove later

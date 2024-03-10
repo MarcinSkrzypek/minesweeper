@@ -108,30 +108,37 @@ std::pair<int, int>* Minefield::getMinePositions() const
 
 void Minefield::resetGame(int rows, int cols, int numberOfMines)
 {
+    clearField();
+
     this->rows = rows;
     this->columns = cols;
     this->numberOfMines = numberOfMines;
 
-    clearField();
+    allocateField();
     setMines();
-
     std::cout<<std::endl; // TODO: Remove later
     show();
 }
 
 void Minefield::clearField()
 {
-    for(int i = 0; i < rows; ++i)
-    {
-        delete[] field[i];
+    if (field != nullptr) {
+        for (int i = 0; i < rows; ++i) {
+            delete[] field[i];
+        }
+        delete[] field;
     }
-    delete[] field;
-    delete[] minePositions;
+    if (minePositions != nullptr) {
+        delete[] minePositions;
+    }
+}
 
+void Minefield::allocateField()
+{
     field = new int*[rows];
     for(int i = 0; i < rows; ++i)
     {
         field[i] = new int[columns] {0};
     }
-    minePositions = nullptr;
+    minePositions = new std::pair<int, int>[numberOfMines];
 }
