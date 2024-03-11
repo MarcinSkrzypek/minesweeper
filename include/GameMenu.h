@@ -14,6 +14,7 @@ class GameMenu {
     GameMenu(Minefield& minefield);
     void initialize(HWND parentHwnd, HINSTANCE hInst, MinefieldView* minefieldView);
     void commandHandler(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
+    void updateWindowTitle(Minefield& minefield);
 
   private:
     Minefield& minefield;

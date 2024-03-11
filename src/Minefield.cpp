@@ -2,9 +2,9 @@
 #include <iostream>
 
 Minefield::Minefield() {
-    this->rows = 10;
-    this->columns = 10;
-    this->numberOfMines = 5;
+    this->rows = 9;
+    this->columns = 9;
+    this->numberOfMines = 10;
     this->minePositions = nullptr;
 
     field = new int*[rows];

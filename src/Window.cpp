@@ -88,7 +88,7 @@ bool Window::init() {
     m_hwnd = CreateWindowEx(
                  WS_EX_OVERLAPPEDWINDOW,
                  "MyWindowClass",
-                 "Minesweeper",
+                 "Minesweeper - Beginner 9x9",
                  WS_OVERLAPPEDWINDOW,
                  CW_USEDEFAULT,
                  CW_USEDEFAULT,

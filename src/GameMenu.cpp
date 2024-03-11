@@ -7,6 +7,7 @@ void GameMenu::initialize(HWND parentHwnd, HINSTANCE hInst, MinefieldView* minef
     this->hInst = hInst;
     this->minefieldView = minefieldView;
     setupMenu();
+    updateWindowTitle(minefield);
 }
 
 void GameMenu::setupMenu() {
@@ -34,6 +35,7 @@ void GameMenu::commandHandler(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
         std::pair<Minefield*, MinefieldView*> params = {&minefield, minefieldView};
         DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_DIFFICULTY_DIALOG), parentHwnd, DifficultyDialogProc, reinterpret_cast<LPARAM>(&params));
         SetWindowPos(hwnd, NULL, 0, 0, 32 * minefield.getColumns() + 32, 32 * minefield.getRows() + 106, SWP_NOMOVE | SWP_NOZORDER);
+        updateWindowTitle(minefield);
         break;
     }
     case IDM_EXIT:
@@ -174,4 +176,25 @@ INT_PTR CALLBACK DifficultyDialogProc(HWND hDlg, UINT message, WPARAM wParam, LP
         break;
     }
     return (INT_PTR)FALSE;
+}
+
+void GameMenu::updateWindowTitle(Minefield& minefield) {
+    std::wstring title = L"Minesweeper - ";
+    switch(GameConfig::getCurrentDifficulty()) {
+        case DifficultyLevel::Beginner:
+            title += L"Beginner ";
+            break;
+        case DifficultyLevel::Intermediate:
+            title += L"Intermediate ";
+            break;
+        case DifficultyLevel::Expert:
+            title += L"Expert ";
+            break;
+        case DifficultyLevel::Custom:
+            title += L"Custom ";
+            break;
+    }
+
+    title += std::to_wstring(minefield.getRows()) + L"x" + std::to_wstring(minefield.getColumns());
+    SetWindowTextW(parentHwnd, title.c_str());
 }
