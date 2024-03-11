@@ -6,9 +6,8 @@
 #include "Minefield.h"
 #include <vector>
 
-class MinefieldView
-{
-public:
+class MinefieldView {
+  public:
     MinefieldView(Minefield& minefield, HWND hwnd, HINSTANCE hInst, BitmapLoader& bitmapLoader);
     ~MinefieldView();
 
@@ -21,7 +20,7 @@ public:
     void revealAllMines();
     void resetCells(int rows, int cols);
 
-private:
+  private:
     Minefield& minefield;
     HWND hwnd;
     HINSTANCE hInst;

@@ -4,9 +4,8 @@
 #include <Windows.h>
 #include "CellState.h"
 
-class Cell
-{
-public:
+class Cell {
+  public:
     Cell(HWND parentHWND, HINSTANCE hInst, int x, int y, int width, int height, int id);
     ~Cell();
     void create();
@@ -15,7 +14,7 @@ public:
     CellState getState() const;
     void setState(CellState newState);
 
-private:
+  private:
     HWND hwndButton;
     HWND parentHWND;
     HINSTANCE hInstance;

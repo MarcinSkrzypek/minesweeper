@@ -5,9 +5,8 @@
 #include <ctime>
 #include <utility>
 
-class Minefield
-{
-public:
+class Minefield {
+  public:
     Minefield();
     virtual ~Minefield();
 
@@ -24,7 +23,7 @@ public:
     int getRows();
     int getColumns();
 
-private:
+  private:
     int rows;
     int columns;
     int** field;

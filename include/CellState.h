@@ -1,8 +1,7 @@
 #ifndef CELLSTATE_H
 #define CELLSTATE_H
 
-enum class CellState
-{
+enum class CellState {
     Revealed,
     Unrevealed,
     Guessed,

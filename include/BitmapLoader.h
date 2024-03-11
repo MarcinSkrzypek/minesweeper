@@ -6,9 +6,8 @@
 #include <map>
 #include <string>
 
-class BitmapLoader
-{
-public:
+class BitmapLoader {
+  public:
     BitmapLoader();
     ~BitmapLoader();
 
@@ -16,7 +15,7 @@ public:
     HBITMAP getImage(const std::wstring& imageName) const;
     HBITMAP getBitmapForValue(int value) const;
 
-private:
+  private:
     std::map<std::wstring, HBITMAP> images;
     HBITMAP loadImage(const wchar_t* imagePath);
 };

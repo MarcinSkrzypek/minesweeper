@@ -9,14 +9,13 @@
 #include "DifficultyLevel.h"
 #include <tchar.h>
 
-class GameMenu
-{
-public:
+class GameMenu {
+  public:
     GameMenu(Minefield& minefield);
     void initialize(HWND parentHwnd, HINSTANCE hInst, MinefieldView* minefieldView);
     void commandHandler(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
 
-private:
+  private:
     Minefield& minefield;
     MinefieldView* minefieldView;
     HWND parentHwnd;

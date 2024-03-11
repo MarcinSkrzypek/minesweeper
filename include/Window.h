@@ -10,9 +10,8 @@
 #include "GameConfig.h"
 #include "DifficultyLevel.h"
 
-class Window
-{
-public:
+class Window {
+  public:
     Window(Minefield& minefield, BitmapLoader& bitmapLoader, GameMenu& gameMenu);
     ~Window();
 
@@ -26,7 +25,7 @@ public:
     void onUpdate();
     void onDestroy();
 
-private:
+  private:
     static LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lparam);
     bool m_is_run;
     Minefield& minefield;
