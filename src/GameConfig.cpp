@@ -1,6 +1,7 @@
 #include "GameConfig.h"
 
 DifficultyLevel GameConfig::currentDifficulty = DifficultyLevel::Beginner;
+bool GameConfig::isGameOver = false;
 
 const std::map<DifficultyLevel, DifficultySettings> GameConfig::difficultyMap = {
     {DifficultyLevel::Beginner, {9, 9, 10}},
@@ -18,4 +19,11 @@ DifficultyLevel GameConfig::getCurrentDifficulty() {
 
 DifficultySettings GameConfig::getDifficultySettings(DifficultyLevel difficulty) {
     return difficultyMap.at(difficulty);
+}
+
+bool GameConfig::getGameOverFlag() {
+    return isGameOver;
+}
+void GameConfig::setGameOverFlag(bool isOver) {
+    isGameOver = isOver;
 }

@@ -4,6 +4,7 @@
 #include "BitmapLoader.h"
 #include "Cell.h"
 #include "Minefield.h"
+#include "GameConfig.h"
 #include <vector>
 
 class MinefieldView {

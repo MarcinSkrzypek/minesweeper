@@ -28,6 +28,7 @@ void GameMenu::commandHandler(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
     case IDM_NEW_GAME:
         minefield.resetGame(minefield.getRows(), minefield.getColumns(), minefield.getNumberOfMines());
         minefieldView->resetCells(minefield.getRows(), minefield.getColumns());
+        GameConfig::setGameOverFlag(false);
         break;
     case IDM_DIFFICULTY: {
         std::pair<Minefield*, MinefieldView*> params = {&minefield, minefieldView};
@@ -142,6 +143,7 @@ void HandleDifficultySelection(HWND hDlg, WPARAM wParam, Minefield* minefield, M
 
             minefield->resetGame(rows, cols, mines);
             minefieldView->resetCells(rows, cols);
+            GameConfig::setGameOverFlag(false);
             EndDialog(hDlg, IDOK);
         }
     } else if(LOWORD(wParam) == IDCANCEL) {

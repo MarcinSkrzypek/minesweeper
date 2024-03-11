@@ -33,22 +33,26 @@ void MinefieldView::releaseCells() {
 }
 
 void MinefieldView::handleCellLeftClick(int wmId) {
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < columns; ++j) {
-            if (cells[i][j]->getId() == wmId) {
-                revealCell(i, j);
-                return;
+    if(!GameConfig::getGameOverFlag()) {
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < columns; ++j) {
+                if (cells[i][j]->getId() == wmId) {
+                    revealCell(i, j);
+                    return;
+                }
             }
         }
     }
 }
 
 void MinefieldView::handleCellRightClick(HWND hwndControl) {
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < columns; ++j) {
-            if (cells[i][j]->getHandle() == hwndControl) {
-                updateCellOnRightClick(cells[i][j]);
-                return;
+    if(!GameConfig::getGameOverFlag()) {
+        for (int i = 0; i < rows; ++i) {
+            for (int j = 0; j < columns; ++j) {
+                if (cells[i][j]->getHandle() == hwndControl) {
+                    updateCellOnRightClick(cells[i][j]);
+                    return;
+                }
             }
         }
     }
@@ -79,18 +83,21 @@ void MinefieldView::updateCellOnRightClick(Cell* cell) {
 void MinefieldView::revealCell(int i, int j) {
     int fieldValue = minefield.check(i, j);
 
-    if (fieldValue == 9) {
-        revealAllMines();
-    } else if (fieldValue == 0) {
-        cascadeReveal(i, j);
-    } else {
-        HBITMAP bitmap = bitmapLoader.getBitmapForValue(fieldValue);
-        if (bitmap != nullptr) {
-            SendMessage(cells[i][j]->getHandle(), BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)bitmap);
-            cells[i][j]->setState(CellState::Revealed);
+    if(cells[i][j]->getState() != CellState::Revealed) {
+        if (fieldValue == 9) {
+            revealAllMines();
+            GameConfig::setGameOverFlag(true);
+            MessageBoxW(hwnd, L"You lost.", L"Game over", MB_OK | MB_ICONEXCLAMATION);
+        } else if (fieldValue == 0) {
+            cascadeReveal(i, j);
+        } else {
+            HBITMAP bitmap = bitmapLoader.getBitmapForValue(fieldValue);
+            if (bitmap != nullptr) {
+                SendMessage(cells[i][j]->getHandle(), BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)bitmap);
+                cells[i][j]->setState(CellState::Revealed);
+            }
         }
     }
-
 }
 
 void MinefieldView::cascadeReveal(int i, int j) {
