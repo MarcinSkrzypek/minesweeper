@@ -17,7 +17,7 @@ void MinefieldView::createCells() {
     for (int i = 0; i < rows; ++i) {
         std::vector<Cell*> row;
         for (int j = 0; j < columns; ++j) {
-            row.push_back(new Cell(hwnd, hInst, 8 + 32 * j, 56 + 32 * i, 32, 32, 100 + i * columns + j));
+            row.push_back(new Cell(hwnd, hInst, 10 + 32 * j, 54 + 32 * i, 32, 32, 100 + i * columns + j));
         }
         cells.push_back(std::move(row));
     }

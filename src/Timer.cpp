@@ -17,9 +17,9 @@ void Timer::start() {
 
     HFONT hDigitalFont = fontLoader.getFont(L"Digital-7 Mono");
     hTimer = CreateWindowExW(0, L"STATIC", L"00:00",
-                                 WS_VISIBLE | WS_CHILD,
-                                 timerX, 10, 100, 32,
-                                 parentHwnd, NULL, hInst, NULL);
+                             WS_VISIBLE | WS_CHILD,
+                             timerX, 10, 100, 32,
+                             parentHwnd, NULL, hInst, NULL);
     SendMessage(hTimer, WM_SETFONT, (WPARAM)hDigitalFont, TRUE);
 
     if (!running) {
@@ -56,4 +56,16 @@ void Timer::reset() {
     startTime = GetTickCount();
     running = true;
     SetWindowTextW(hTimer, L"00:00");
+}
+
+void Timer::updateTimerPosition() {
+    if (!hTimer) return;
+
+    RECT rcClient;
+    GetClientRect(parentHwnd, &rcClient);
+    int windowWidth = rcClient.right - rcClient.left;
+
+    int timerX = windowWidth - 90;
+
+    SetWindowPos(hTimer, NULL, timerX, 10, 100, 32, SWP_NOSIZE | SWP_NOZORDER);
 }

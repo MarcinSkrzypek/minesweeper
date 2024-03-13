@@ -37,6 +37,7 @@ class Window {
     MinefieldView* minefieldView;
     GameMenu& gameMenu;
     Timer* timer;
+    HICON hWindowIcon;
 };
 
 #endif // WINDOW_H

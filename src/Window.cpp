@@ -6,6 +6,15 @@ Window::Window(Minefield& minefield, BitmapLoader& bitmapLoader, GameMenu& gameM
 }
 
 Window::~Window() {
+    if (timer != nullptr) {
+        timer->stop();
+        delete timer;
+    }
+
+    if (hWindowIcon != nullptr) {
+        DestroyIcon(hWindowIcon);
+    }
+
     if (minefieldView) {
         delete minefieldView;
     }
@@ -72,6 +81,8 @@ LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
 
 
 bool Window::init() {
+    hWindowIcon = (HICON)LoadImageW(NULL, L"icons/MinesBorderlessSm.ico", IMAGE_ICON, 0, 0, LR_LOADFROMFILE);
+
     WNDCLASSEX wc = {};
     wc.cbSize = sizeof(WNDCLASSEX);
     wc.style = CS_HREDRAW | CS_VREDRAW;
@@ -79,12 +90,12 @@ bool Window::init() {
     wc.cbClsExtra = 0;
     wc.cbWndExtra = 0;
     wc.hInstance = GetModuleHandle(nullptr);
-    wc.hIcon = LoadIcon(NULL, IDI_APPLICATION);
+    wc.hIcon = hWindowIcon;
     wc.hCursor = LoadCursor(NULL, IDC_ARROW);
     wc.hbrBackground = (HBRUSH)(COLOR_WINDOW+1);
     wc.lpszMenuName = NULL;
     wc.lpszClassName = "MyWindowClass";
-    wc.hIconSm = LoadIcon(NULL, IDI_APPLICATION);
+    wc.hIconSm = hWindowIcon;
 
     if (!RegisterClassEx(&wc)) {
         MessageBox(NULL, "Window Registration Failed!", "Error!", MB_ICONEXCLAMATION | MB_OK);
@@ -98,8 +109,8 @@ bool Window::init() {
                  WS_OVERLAPPEDWINDOW,
                  CW_USEDEFAULT,
                  CW_USEDEFAULT,
-                 32*minefield.getColumns()+32,
-                 32*minefield.getRows()+106,
+                 32*minefield.getColumns()+40,
+                 32*minefield.getRows()+128,
                  NULL, NULL, GetModuleHandle(nullptr), this);
 
     SetLayeredWindowAttributes(m_hwnd, 0, 255, LWA_ALPHA);

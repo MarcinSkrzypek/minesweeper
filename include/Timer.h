@@ -18,6 +18,7 @@ class Timer {
     void stop();
     void update();
     void reset();
+    void updateTimerPosition();
 
   private:
     FontLoader& fontLoader;

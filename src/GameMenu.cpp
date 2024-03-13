@@ -49,9 +49,10 @@ void GameMenu::commandHandler(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
     case IDM_DIFFICULTY: {
         DialogData* dialogData = new DialogData{&minefield, minefieldView, timer};
         DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_DIFFICULTY_DIALOG), parentHwnd, DifficultyDialogProc, reinterpret_cast<LPARAM>(dialogData));
-        SetWindowPos(hwnd, NULL, 0, 0, 32 * minefield.getColumns() + 32, 32 * minefield.getRows() + 106, SWP_NOMOVE | SWP_NOZORDER);
+        SetWindowPos(hwnd, NULL, 0, 0, 32 * minefield.getColumns() + 40, 32 * minefield.getRows() + 128, SWP_NOMOVE | SWP_NOZORDER);
         updateWindowTitle(minefield);
         updateMineCounter(minefieldView->getCurrentMinesCount());
+        timer->updateTimerPosition();
         break;
     }
     case IDM_EXIT:
