@@ -9,10 +9,11 @@
 #include "Resource.h"
 #include "GameConfig.h"
 #include "DifficultyLevel.h"
+#include "Timer.h"
 
 class Window {
   public:
-    Window(Minefield& minefield, BitmapLoader& bitmapLoader, GameMenu& gameMenu);
+    Window(Minefield& minefield, BitmapLoader& bitmapLoader, GameMenu& gameMenu, FontLoader& fontLoader);
     ~Window();
 
     bool init();
@@ -32,8 +33,10 @@ class Window {
     HWND m_hwnd;
     HINSTANCE m_hInst;
     BitmapLoader& bitmapLoader;
+    FontLoader& fontLoader;
     MinefieldView* minefieldView;
     GameMenu& gameMenu;
+    Timer* timer;
 };
 
 #endif // WINDOW_H

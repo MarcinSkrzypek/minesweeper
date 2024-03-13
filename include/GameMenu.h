@@ -9,12 +9,13 @@
 #include "DifficultyLevel.h"
 #include "BitmapLoader.h"
 #include "FontLoader.h"
+#include "Timer.h"
 #include <tchar.h>
 
 class GameMenu {
   public:
-    GameMenu(Minefield& minefield, BitmapLoader& bitmapLoader);
-    void initialize(HWND parentHwnd, HINSTANCE hInst, MinefieldView* minefieldView);
+    GameMenu(Minefield& minefield, BitmapLoader& bitmapLoader, FontLoader& fontLoader);
+    void initialize(HWND parentHwnd, HINSTANCE hInst, MinefieldView* minefieldView, Timer* timer);
     void commandHandler(HWND hwnd, UINT message, WPARAM wParam, LPARAM lParam);
     void updateWindowTitle(Minefield& minefield);
     void updateMineCounter(int currentMinesCount);
@@ -23,7 +24,8 @@ class GameMenu {
     Minefield& minefield;
     BitmapLoader& bitmapLoader;
     MinefieldView* minefieldView;
-    FontLoader fontLoader;
+    FontLoader& fontLoader;
+    Timer* timer;
     HWND parentHwnd;
     HINSTANCE hInst;
     HMENU hMenu;

@@ -1,14 +1,15 @@
 #include "MinefieldView.h"
 
 MinefieldView::MinefieldView(Minefield& minefield, HWND hwnd, HINSTANCE hInst, BitmapLoader& bitmapLoader)
-    : minefield(minefield), hwnd(hwnd), hInst(hInst), bitmapLoader(bitmapLoader), rows(minefield.getRows()), columns(minefield.getColumns()) {
+    : minefield(minefield), hwnd(hwnd), hInst(hInst), bitmapLoader(bitmapLoader), timer(nullptr), rows(minefield.getRows()), columns(minefield.getColumns()) {
 }
 
 MinefieldView::~MinefieldView() {
     releaseCells();
 }
 
-void MinefieldView::initialize() {
+void MinefieldView::initialize(Timer* timer) {
+    this->timer = timer;
     createCells();
 }
 
@@ -88,6 +89,7 @@ void MinefieldView::revealCell(int i, int j) {
         if (fieldValue == 9) {
             revealAllMines();
             GameConfig::setGameOverFlag(true);
+            timer->stop();
             MessageBoxW(hwnd, L"You lost.", L"Game over", MB_OK | MB_ICONEXCLAMATION);
         } else if (fieldValue == 0) {
             cascadeReveal(i, j);

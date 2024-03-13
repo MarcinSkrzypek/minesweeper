@@ -1,8 +1,8 @@
 #include "Window.h"
 
-Window::Window(Minefield& minefield, BitmapLoader& bitmapLoader, GameMenu& gameMenu)
+Window::Window(Minefield& minefield, BitmapLoader& bitmapLoader, GameMenu& gameMenu, FontLoader& fontLoader)
     : m_is_run(false), minefield(minefield), m_hwnd(NULL), m_hInst(GetModuleHandle(nullptr)),
-      bitmapLoader(bitmapLoader), minefieldView(nullptr), gameMenu(gameMenu) {
+      bitmapLoader(bitmapLoader), fontLoader(fontLoader), minefieldView(nullptr), gameMenu(gameMenu) {
 }
 
 Window::~Window() {
@@ -57,6 +57,11 @@ LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
         window->minefieldView->handleCellRightClick(hwndControl);
         window->gameMenu.updateMineCounter(window->minefieldView->getCurrentMinesCount());
         break;
+    }
+    case WM_TIMER: {
+        if (wparam == window->timer->timerID) {
+            window->timer->update();
+        }
     }
     default: {
         return DefWindowProc(hwnd, msg, wparam, lparam);
@@ -142,8 +147,12 @@ bool Window::isRun() {
 void Window::onCreate() {
     GameConfig::setCurrentDifficulty(DifficultyLevel::Beginner);
     bitmapLoader.loadImages();
-    gameMenu.initialize(m_hwnd, GetModuleHandle(nullptr), minefieldView);
-    minefieldView->initialize();
+    fontLoader.loadFonts();
+    fontLoader.createFonts();
+    timer = new Timer(fontLoader, m_hwnd, GetModuleHandle(nullptr), 1, 1000);
+    timer->start();
+    gameMenu.initialize(m_hwnd, GetModuleHandle(nullptr), minefieldView, timer);
+    minefieldView->initialize(timer);
     minefield.show(); // TODO: Remove later
 }
 

@@ -46,6 +46,7 @@
 		<Unit filename="include/Minefield.h" />
 		<Unit filename="include/MinefieldView.h" />
 		<Unit filename="include/Resource.h" />
+		<Unit filename="include/Timer.h" />
 		<Unit filename="include/Window.h" />
 		<Unit filename="main.cpp" />
 		<Unit filename="resources/diffDialog.rc">
@@ -58,6 +59,7 @@
 		<Unit filename="src/GameMenu.cpp" />
 		<Unit filename="src/Minefield.cpp" />
 		<Unit filename="src/MinefieldView.cpp" />
+		<Unit filename="src/Timer.cpp" />
 		<Unit filename="src/Window.cpp" />
 		<Extensions>
 			<lib_finder disable_auto="1" />

@@ -1,25 +1,23 @@
 #include "FontLoader.h"
 
 FontLoader::FontLoader() {
-    //loadFonts();
-    //createFonts();
 }
 
 FontLoader::~FontLoader() {
     for (const auto& font : fonts) {
         DeleteObject(font.second);
     }
-    RemoveFontResourceEx("resources/fonts/Digital-7 400.ttf", FR_PRIVATE, NULL);
+    RemoveFontResourceEx("resources/fonts/digital-7__mono_.ttf", FR_PRIVATE, NULL);
 }
 
 void FontLoader::loadFonts() {
-    if(AddFontResourceEx("resources/fonts/Digital-7 400.ttf", FR_PRIVATE, NULL) == 0) {
-        MessageBoxW(NULL, L"Failed to load font Digital-7.", L"Error", MB_OK | MB_ICONERROR);
+    if(AddFontResourceEx("resources/fonts/digital-7__mono_.ttf", FR_PRIVATE, NULL) == 0) {
+        MessageBoxW(NULL, L"Failed to load font Digital-7 Mono.", L"Error", MB_OK | MB_ICONERROR);
     }
 }
 
 void FontLoader::createFonts() {
-    createFont(30, L"Digital-7");
+    createFont(32, L"Digital-7 Mono");
 }
 
 HFONT FontLoader::getFont(const std::wstring& fontName) {
