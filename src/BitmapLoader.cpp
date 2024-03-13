@@ -24,6 +24,7 @@ void BitmapLoader::loadImages() {
     images[L"Seven"] = loadImage(L"icons/Seven.bmp");
     images[L"Eight"] = loadImage(L"icons/Eight.bmp");
     images[L"Mines"] = loadImage(L"icons/Mines.bmp");
+    images[L"MinesBorderless"] = loadImage(L"icons/MinesBorderless.bmp");
     images[L"MinesGuess"] = loadImage(L"icons/MinesGuess.bmp");
     images[L"QuestionMark"] = loadImage(L"icons/QuestionMark.bmp");
 }

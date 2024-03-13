@@ -40,6 +40,7 @@
 		<Unit filename="include/Cell.h" />
 		<Unit filename="include/CellState.h" />
 		<Unit filename="include/DifficultyLevel.h" />
+		<Unit filename="include/FontLoader.h" />
 		<Unit filename="include/GameConfig.h" />
 		<Unit filename="include/GameMenu.h" />
 		<Unit filename="include/Minefield.h" />
@@ -52,6 +53,7 @@
 		</Unit>
 		<Unit filename="src/BitmapLoader.cpp" />
 		<Unit filename="src/Cell.cpp" />
+		<Unit filename="src/FontLoader.cpp" />
 		<Unit filename="src/GameConfig.cpp" />
 		<Unit filename="src/GameMenu.cpp" />
 		<Unit filename="src/Minefield.cpp" />

@@ -4,7 +4,7 @@
 int main() {
     Minefield minefield;
     BitmapLoader bitmapLoader;
-    GameMenu gameMenu(minefield);
+    GameMenu gameMenu(minefield, bitmapLoader);
     Window app(minefield, bitmapLoader, gameMenu);
     if (app.init()) {
         while (app.isRun()) {

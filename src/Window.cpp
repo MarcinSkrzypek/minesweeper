@@ -55,6 +55,7 @@ LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
     case WM_CONTEXTMENU: {
         HWND hwndControl = (HWND)wparam;
         window->minefieldView->handleCellRightClick(hwndControl);
+        window->gameMenu.updateMineCounter(window->minefieldView->getCurrentMinesCount());
         break;
     }
     default: {
@@ -140,6 +141,7 @@ bool Window::isRun() {
 
 void Window::onCreate() {
     GameConfig::setCurrentDifficulty(DifficultyLevel::Beginner);
+    bitmapLoader.loadImages();
     gameMenu.initialize(m_hwnd, GetModuleHandle(nullptr), minefieldView);
     minefieldView->initialize();
     minefield.show(); // TODO: Remove later

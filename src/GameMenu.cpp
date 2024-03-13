@@ -1,12 +1,18 @@
 #include "GameMenu.h"
 
-GameMenu::GameMenu(Minefield& minefield) : minefield(minefield), minefieldView(nullptr), parentHwnd(nullptr), hInst(nullptr), hMenu(nullptr) {}
+GameMenu::GameMenu(Minefield& minefield, BitmapLoader& bitmapLoader) : minefield(minefield), bitmapLoader(bitmapLoader),
+    minefieldView(nullptr), parentHwnd(nullptr), hInst(nullptr), hMenu(nullptr) {}
 
 void GameMenu::initialize(HWND parentHwnd, HINSTANCE hInst, MinefieldView* minefieldView) {
     this->parentHwnd = parentHwnd;
     this->hInst = hInst;
     this->minefieldView = minefieldView;
+
+    fontLoader = FontLoader();
+    fontLoader.loadFonts();
+    fontLoader.createFonts();
     setupMenu();
+    setupMineCounter(parentHwnd, hInst, bitmapLoader, minefieldView);
     updateWindowTitle(minefield);
 }
 
@@ -30,12 +36,15 @@ void GameMenu::commandHandler(HWND hwnd, UINT message, WPARAM wParam, LPARAM lPa
         minefield.resetGame(minefield.getRows(), minefield.getColumns(), minefield.getNumberOfMines());
         minefieldView->resetCells(minefield.getRows(), minefield.getColumns());
         GameConfig::setGameOverFlag(false);
+        minefieldView->setCurrentMinesCount(minefield.getNumberOfMines());
+        updateMineCounter(minefieldView->getCurrentMinesCount());
         break;
     case IDM_DIFFICULTY: {
         std::pair<Minefield*, MinefieldView*> params = {&minefield, minefieldView};
         DialogBoxParam(hInst, MAKEINTRESOURCE(IDD_DIFFICULTY_DIALOG), parentHwnd, DifficultyDialogProc, reinterpret_cast<LPARAM>(&params));
         SetWindowPos(hwnd, NULL, 0, 0, 32 * minefield.getColumns() + 32, 32 * minefield.getRows() + 106, SWP_NOMOVE | SWP_NOZORDER);
         updateWindowTitle(minefield);
+        updateMineCounter(minefieldView->getCurrentMinesCount());
         break;
     }
     case IDM_EXIT:
@@ -146,6 +155,7 @@ void HandleDifficultySelection(HWND hDlg, WPARAM wParam, Minefield* minefield, M
             minefield->resetGame(rows, cols, mines);
             minefieldView->resetCells(rows, cols);
             GameConfig::setGameOverFlag(false);
+            minefieldView->setCurrentMinesCount(minefield->getNumberOfMines());
             EndDialog(hDlg, IDOK);
         }
     } else if(LOWORD(wParam) == IDCANCEL) {
@@ -181,20 +191,44 @@ INT_PTR CALLBACK DifficultyDialogProc(HWND hDlg, UINT message, WPARAM wParam, LP
 void GameMenu::updateWindowTitle(Minefield& minefield) {
     std::wstring title = L"Minesweeper - ";
     switch(GameConfig::getCurrentDifficulty()) {
-        case DifficultyLevel::Beginner:
-            title += L"Beginner ";
-            break;
-        case DifficultyLevel::Intermediate:
-            title += L"Intermediate ";
-            break;
-        case DifficultyLevel::Expert:
-            title += L"Expert ";
-            break;
-        case DifficultyLevel::Custom:
-            title += L"Custom ";
-            break;
+    case DifficultyLevel::Beginner:
+        title += L"Beginner ";
+        break;
+    case DifficultyLevel::Intermediate:
+        title += L"Intermediate ";
+        break;
+    case DifficultyLevel::Expert:
+        title += L"Expert ";
+        break;
+    case DifficultyLevel::Custom:
+        title += L"Custom ";
+        break;
     }
 
     title += std::to_wstring(minefield.getRows()) + L"x" + std::to_wstring(minefield.getColumns());
     SetWindowTextW(parentHwnd, title.c_str());
+}
+
+void GameMenu::setupMineCounter(HWND parentHwnd, HINSTANCE hInst, BitmapLoader& bitmapLoader, MinefieldView* minefieldView) {
+    HBITMAP hMineBitmap = bitmapLoader.getImage(L"MinesBorderless");
+    hMineImage = CreateWindowExW(0, L"STATIC", L"",
+                                 WS_VISIBLE | WS_CHILD | SS_BITMAP,
+                                 10, 10, 32, 32,
+                                 parentHwnd, (HMENU)NULL, hInst, NULL);
+    SendMessage(hMineImage, STM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)hMineBitmap);
+
+    minefieldView->setCurrentMinesCount(minefield.getNumberOfMines());
+    std::wstring mineCounterText = std::to_wstring(minefieldView->getCurrentMinesCount());
+
+    HFONT hDigitalFont = fontLoader.getFont(L"Digital-7");
+    hMineCounter = CreateWindowExW(0, L"STATIC", mineCounterText.c_str(),
+                                   WS_VISIBLE | WS_CHILD,
+                                   43, 10, 100, 32,
+                                   parentHwnd, NULL, hInst, NULL);
+    SendMessage(hMineCounter, WM_SETFONT, (WPARAM)hDigitalFont, TRUE);
+}
+
+void GameMenu::updateMineCounter(int currentMinesCount) {
+    std::wstring mineCounterText = std::to_wstring(currentMinesCount);
+    SetWindowTextW(hMineCounter, mineCounterText.c_str());
 }

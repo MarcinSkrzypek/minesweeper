@@ -9,7 +9,6 @@ MinefieldView::~MinefieldView() {
 }
 
 void MinefieldView::initialize() {
-    bitmapLoader.loadImages();
     createCells();
 }
 
@@ -64,6 +63,7 @@ void MinefieldView::updateCellOnRightClick(Cell* cell) {
     case CellState::Unrevealed:
         bitmap = bitmapLoader.getImage(L"MinesGuess");
         cell->setState(CellState::Guessed);
+        decCurrentMinesCount();
         break;
     case CellState::Revealed:
         return;
@@ -74,6 +74,7 @@ void MinefieldView::updateCellOnRightClick(Cell* cell) {
     case CellState::Guessed:
         bitmap = bitmapLoader.getImage(L"QuestionMark");
         cell->setState(CellState::Questioned);
+        incCurrentMinesCount();
         break;
     }
 
@@ -152,4 +153,20 @@ void MinefieldView::resetCells(int rows, int cols) {
 
     releaseCells();
     createCells();
+}
+
+int MinefieldView::getCurrentMinesCount() {
+    return currentMinesCount;
+}
+
+void MinefieldView::setCurrentMinesCount(int currentMinesCount) {
+    this->currentMinesCount = currentMinesCount;
+}
+
+void MinefieldView::incCurrentMinesCount() {
+    this->currentMinesCount += 1;
+}
+
+void MinefieldView::decCurrentMinesCount() {
+    this->currentMinesCount -= 1;
 }

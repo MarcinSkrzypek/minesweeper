@@ -20,6 +20,10 @@ class MinefieldView {
     void cascadeReveal(int i, int j);
     void revealAllMines();
     void resetCells(int rows, int cols);
+    int getCurrentMinesCount();
+    void setCurrentMinesCount(int currentMinesCount);
+    void incCurrentMinesCount();
+    void decCurrentMinesCount();
 
   private:
     Minefield& minefield;
@@ -28,6 +32,7 @@ class MinefieldView {
     BitmapLoader& bitmapLoader;
     std::vector<std::vector<Cell*>> cells;
     int rows, columns;
+    int currentMinesCount;
 
     void createCells();
     void releaseCells();
