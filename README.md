@@ -2,10 +2,12 @@
 
 This is a custom implementation of the classic Minesweeper game for Windows, built with C++ and the WinAPI for graphical interface rendering.
 
+[![GitHub release](https://img.shields.io/badge/release-v.1.0.0-blue)](https://github.com/MarcinSkrzypek/minesweeper/releases/tag/1.0.0)
+
 ## Features
 
 -   Classic Minesweeper gameplay.
--   Customizable difficulty levels (Beginner, Intermediate, Expert, and Custom).
+-   Customizable difficulty levels (Beginner, Intermediate, Expert and Custom).
 -   Graphical user interface using WinAPI.
 -   No external dependencies, pure WinAPI.
 -   Timer and mine counter.
