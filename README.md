@@ -10,6 +10,10 @@ This is a custom implementation of the classic Minesweeper game for Windows, bui
 -   No external dependencies, pure WinAPI.
 -   Timer and mine counter.
 
+## Showcase
+
+![Game view](https://github.com/MarcinSkrzypek/minesweeper/blob/main/assets/showcase.jpg "Game view")
+
 ## Getting Started
 
 ### Prerequisites
