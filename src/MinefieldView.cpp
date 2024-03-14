@@ -1,5 +1,4 @@
 #include "MinefieldView.h"
-#include <iostream>
 
 MinefieldView::MinefieldView(Minefield& minefield, HWND hwnd, HINSTANCE hInst, BitmapLoader& bitmapLoader)
     : minefield(minefield), hwnd(hwnd), hInst(hInst), bitmapLoader(bitmapLoader), timer(nullptr),

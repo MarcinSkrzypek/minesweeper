@@ -4,3 +4,8 @@
 # generated directories
 bin/
 obj/
+# Ignore everything in the build directory
+build/*
+!build/.gitkeep
+# Ignore executable files
+*.exe

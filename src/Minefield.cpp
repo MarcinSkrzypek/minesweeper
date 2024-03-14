@@ -1,5 +1,4 @@
 #include "Minefield.h"
-#include <iostream>
 
 Minefield::Minefield() {
     this->rows = 9;
@@ -57,15 +56,6 @@ bool Minefield::isValidCell(int row, int col) {
     return row >= 0 && row < rows && col >= 0 && col < columns && field[row][col] != 9;
 }
 
-void Minefield::show() {
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < columns; ++j) {
-            std::cout << field[i][j] << " ";
-        }
-        std::cout << std::endl;
-    }
-}
-
 int Minefield::check(int row, int column) {
     return field[row][column];
 }
@@ -95,8 +85,6 @@ void Minefield::resetGame(int rows, int cols, int numberOfMines) {
 
     allocateField();
     setMines();
-    std::cout<<std::endl; // TODO: Remove later
-    show();
 }
 
 void Minefield::clearField() {

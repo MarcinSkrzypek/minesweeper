@@ -165,7 +165,6 @@ void Window::onCreate() {
     timer->start();
     gameMenu.initialize(m_hwnd, GetModuleHandle(nullptr), minefieldView, timer);
     minefieldView->initialize(timer);
-    minefield.show(); // TODO: Remove later
 }
 
 void Window::onUpdate() {
