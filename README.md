@@ -60,6 +60,11 @@ This is a custom implementation of the classic Minesweeper game for Windows, bui
 -   Right-click on a cell to mark it with "!" or "?".
 -   Reset the game or change difficulty through the game menu.
 
+## License
+
+This project is licensed under the MIT License.
+See [LICENSE](https://github.com/MarcinSkrzypek/minesweeper/blob/main/LICENSE.md) for more details.
+
 ## Used technologies
 
 [<img align="left" width="32" height="32" alt="C++17" src="https://raw.githubusercontent.com/isocpp/logos/master/cpp_logo.png" style="padding: 0 32px 32px 0">](https://isocpp.org/get-started)
