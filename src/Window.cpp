@@ -57,6 +57,7 @@ LRESULT CALLBACK Window::WndProc(HWND hwnd, UINT msg, WPARAM wparam, LPARAM lpar
             break;
         default:
             window->minefieldView->handleCellLeftClick(wmId);
+            window->gameMenu.updateMineCounter(window->minefieldView->getCurrentMinesCount());
             break;
         }
         break;

@@ -1,7 +1,10 @@
 #include "MinefieldView.h"
+#include <iostream>
 
 MinefieldView::MinefieldView(Minefield& minefield, HWND hwnd, HINSTANCE hInst, BitmapLoader& bitmapLoader)
-    : minefield(minefield), hwnd(hwnd), hInst(hInst), bitmapLoader(bitmapLoader), timer(nullptr), rows(minefield.getRows()), columns(minefield.getColumns()) {
+    : minefield(minefield), hwnd(hwnd), hInst(hInst), bitmapLoader(bitmapLoader), timer(nullptr),
+    rows(minefield.getRows()), columns(minefield.getColumns()) {
+        this->currentNotRevealedCells = minefield.getRows() * minefield.getColumns() - minefield.getNumberOfMines();
 }
 
 MinefieldView::~MinefieldView() {
@@ -64,7 +67,7 @@ void MinefieldView::updateCellOnRightClick(Cell* cell) {
     case CellState::Unrevealed:
         bitmap = bitmapLoader.getImage(L"MinesGuess");
         cell->setState(CellState::Guessed);
-        decCurrentMinesCount();
+        this->currentMinesCount -= 1;
         break;
     case CellState::Revealed:
         return;
@@ -75,7 +78,7 @@ void MinefieldView::updateCellOnRightClick(Cell* cell) {
     case CellState::Guessed:
         bitmap = bitmapLoader.getImage(L"QuestionMark");
         cell->setState(CellState::Questioned);
-        incCurrentMinesCount();
+        this->currentMinesCount += 1;
         break;
     }
 
@@ -84,6 +87,10 @@ void MinefieldView::updateCellOnRightClick(Cell* cell) {
 
 void MinefieldView::revealCell(int i, int j) {
     int fieldValue = minefield.check(i, j);
+
+    if(cells[i][j]->getState() == CellState::Guessed) {
+        this->currentMinesCount += 1;
+    }
 
     if(cells[i][j]->getState() != CellState::Revealed) {
         if (fieldValue == 9) {
@@ -98,6 +105,12 @@ void MinefieldView::revealCell(int i, int j) {
             if (bitmap != nullptr) {
                 SendMessage(cells[i][j]->getHandle(), BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)bitmap);
                 cells[i][j]->setState(CellState::Revealed);
+                this->currentNotRevealedCells -= 1;
+                if(this->currentNotRevealedCells == 0) {
+                    GameConfig::setGameOverFlag(true);
+                    timer->stop();
+                    MessageBoxW(hwnd, L"Congratulations, you won!", L"Game over", MB_OK | MB_ICONEXCLAMATION);
+                }
             }
         }
     }
@@ -112,6 +125,12 @@ void MinefieldView::cascadeReveal(int i, int j) {
     if (bitmap != nullptr) {
         SendMessage(cells[i][j]->getHandle(), BM_SETIMAGE, (WPARAM)IMAGE_BITMAP, (LPARAM)bitmap);
         cells[i][j]->setState(CellState::Revealed);
+        this->currentNotRevealedCells -= 1;
+        if(this->currentNotRevealedCells == 0) {
+            GameConfig::setGameOverFlag(true);
+            timer->stop();
+            MessageBoxW(hwnd, L"Congratulations, you won!", L"Game over", MB_OK | MB_ICONEXCLAMATION);
+        }
     }
 
     if (minefield.check(i, j) != 0) {
@@ -155,6 +174,7 @@ void MinefieldView::resetCells(int rows, int cols) {
 
     releaseCells();
     createCells();
+    this->currentNotRevealedCells = minefield.getRows() * minefield.getColumns() - minefield.getNumberOfMines();
 }
 
 int MinefieldView::getCurrentMinesCount() {
@@ -163,12 +183,4 @@ int MinefieldView::getCurrentMinesCount() {
 
 void MinefieldView::setCurrentMinesCount(int currentMinesCount) {
     this->currentMinesCount = currentMinesCount;
-}
-
-void MinefieldView::incCurrentMinesCount() {
-    this->currentMinesCount += 1;
-}
-
-void MinefieldView::decCurrentMinesCount() {
-    this->currentMinesCount -= 1;
 }
